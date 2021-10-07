@@ -1,7 +1,6 @@
 package app.roddy.space.data.cargo;
 
 public enum CargoType {
-
     LUXURY,
     NARCOTIC,
     MILITARY,

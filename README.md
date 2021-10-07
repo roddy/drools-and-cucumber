@@ -36,3 +36,10 @@ There is an open Stackoverflow question about registering custom Cucumber Parame
 on this project. It can be found 
 [here](https://stackoverflow.com/questions/69474687/cucumber-java-wont-use-custom-parametertype). In the meantime a 
 less-efficient workaround was applied pending a resolution to that question. 
+
+This project has a dependency on JavaFX, but it isn't technically a JavaFX project. The original version of this project
+was written in Java 8, when JavaFX was part of the regular JDK. I used the Point3D class from JavaFX because it was 
+easier than rolling my own and it came from some useful utility functions. Fast forward to 2021, and JavaFX is long 
+divorced from the JDK. To date we still only use Point3D, but we have to pull in a decently sized geometry-related 
+module from JavaFX to do so. Future work may either remove JavaFX entirely, or integrate further, depending on how this
+project evolves (if ever.) 

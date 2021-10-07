@@ -7,6 +7,9 @@ import app.roddy.space.data.ShipType;
 import app.roddy.space.data.Species;
 import app.roddy.space.data.sector.Point;
 
+/**
+ * A spaceship is a ship that travels through space.
+ */
 public class Spaceship {
 
     private Species belongsTo = null;
