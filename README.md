@@ -1,6 +1,11 @@
 # drools-and-cucumber
 This is a demo application demonstrating how to use Cucumber (BDD) with Drools business rules.
 
+This is a toy project that contains business logic regarding an imaginary application dealing with aliens, spaceships,
+and outer space piracy. It only contains the business logic part of the application, which is encapsulated in a [JBoss
+Drools](http://www.drools.org/) business rules engine. There is also some Java code, but that is limited to the input
+objects for the rules.
+
 ## What is this?
 
 This is the beginning of a sort of "Space Pirate" game. It uses Drools to do some validation and calculation (eg. 
