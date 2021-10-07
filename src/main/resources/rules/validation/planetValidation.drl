@@ -1,0 +1,41 @@
+package rules.validation;
+
+import app.roddy.space.data.Species;
+import app.roddy.space.data.planet.CommerceType;
+import app.roddy.space.data.planet.Size;
+import app.roddy.space.Planet;
+import app.roddy.space.validation.ValidationResult;
+
+global ValidationResult validation;
+
+rule "A planet must have a name"
+when
+  Planet(name == null)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("planet needs a name");
+end
+
+rule "A planet must have a size"
+when
+  Planet(size == null)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("missing size");
+end
+
+rule "Uninhabited planets cannot have commerce"
+when
+  Planet( inhabitantSpecies == null, commerceType != null )
+then
+ validation.setIsValid(false);
+ validation.appendMessage("uninhabited planet cannot have commerce");
+end
+
+rule "A planet must have coordinates"
+when
+  Planet( location == null)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("planets must have coordinates");
+end

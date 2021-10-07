@@ -1,0 +1,41 @@
+package rules.validation;
+
+import app.roddy.space.Cargo;
+import app.roddy.space.data.cargo.CargoType;
+import app.roddy.space.data.cargo.Dimensions;
+import app.roddy.space.validation.ValidationResult;
+
+global ValidationResult validation;
+
+rule "Cargo must have a name"
+when
+  Cargo(name == null)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("cargo must have a name");
+end
+
+rule "Cargo must have a type"
+when
+  Cargo( cargoType == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("cargo must have a type");
+end
+
+rule "Cargo must have dimensions"
+when
+  Cargo( dimensions == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("cargo must have dimensions");
+end
+
+rule "Cargo must have valid dimensions"
+when
+  Cargo(dimensions != null,
+        dimensions.depth <= 0 || dimensions.length <= 0 || dimensions.width <= 0 || dimensions.lbs <= 0)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("cargo dimensions are invalid");
+end

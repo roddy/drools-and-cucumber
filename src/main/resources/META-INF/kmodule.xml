@@ -1,0 +1,6 @@
+<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/kie/6.0.0/kmodule">
+  <kbase name="validation" packages="rules.validation">
+  </kbase>
+  <kbase name="travel" packages="rules.travel">
+  </kbase>
+</kmodule>

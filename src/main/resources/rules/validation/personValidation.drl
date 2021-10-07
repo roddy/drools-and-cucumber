@@ -1,0 +1,32 @@
+package rules.validation;
+
+import app.roddy.space.data.Gender;
+import app.roddy.space.data.Species;
+import app.roddy.space.Person;
+import app.roddy.space.validation.ValidationResult;
+
+global ValidationResult validation;
+
+rule "A person must have a name"
+when
+  Person( name == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("person is missing a name");
+end
+
+rule "A person must belong to a species"
+when
+  Person( species == null)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("person is missing species");
+end
+
+rule "A person must have a gender"
+when
+  Person( gender == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("person is missing gender");
+end

@@ -1,0 +1,149 @@
+package rules.validation;
+
+import app.roddy.space.crew.Crew;
+import app.roddy.space.Spaceship;
+import app.roddy.space.data.Classification;
+import app.roddy.space.data.ShipType;
+import app.roddy.space.data.Species;
+import app.roddy.space.validation.ValidationResult;
+
+global ValidationResult validation;
+
+rule "All spaceships must have a name"
+when
+  Spaceship( name == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("spaceship is missing a name");
+end
+
+rule "All spaceships must belong to a species"
+when
+  Spaceship( belongsTo == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("spaceship has no owning species");
+end
+
+rule "Only human spaceships can use the prefix U.S.S."
+when
+  Spaceship( name != null,
+             name str[startsWith] "U.S.S.",
+             belongsTo != Species.HUMAN)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("only human ships may use prefix U.S.S.");
+end
+
+rule "Only human spaceships can use the prefix S.S."
+when
+  Spaceship( name != null,
+             name str[startsWith] "S.S.",
+             belongsTo != Species.HUMAN)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("only human ships may use prefix S.S.");
+end
+
+rule "All spaceships must have a captain"
+when
+  Spaceship( captain == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("missing captain");
+end
+
+rule "A spaceship captain must be of the same species as the spaceship owner"
+when
+  Spaceship( belongsTo != null,
+             captain != null,
+             captain.species != belongsTo )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("captain of the wrong species");
+end
+
+rule "A spaceship must have a classification"
+when
+  Spaceship( classification == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("missing classification");
+end
+
+rule "A spaceship must have a type"
+when
+  Spaceship( shipType == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("missing type");
+end
+
+rule "A military ship may not be a freighter"
+when
+  Spaceship( shipType == ShipType.FREIGHTER,
+             classification == Classification.MILITARY)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("military ships cannot be freighters");
+end
+
+rule "A civilian ship may not be a dreadnaught"
+when
+  Spaceship( shipType == ShipType.DREADNAUGHT,
+             classification == Classification.CIVILIAN)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("civilian ships cannot be dreadnaughts");
+end
+
+rule "A pirate ship may not be a transport"
+when
+  Spaceship( shipType == ShipType.TRANSPORT,
+             classification == Classification.PIRATE)
+then
+  validation.setIsValid(false);
+  validation.appendMessage("pirate ships cannot be transports");
+end
+
+rule "A ship may not have a complement of less than one (the captain)"
+when
+  Spaceship( complement <= 0 )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("minimum crew complement is 1");
+end
+
+rule "A ship must have a crew"
+when
+  Spaceship( crew == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("missing crew");
+end
+
+rule "A ship must have a crew of at least one"
+when
+  Spaceship( crew != null,
+             crew.crewSize == 0 )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("crew has nobody in it");
+end
+
+rule "A ship's crew size must not exceed its complement"
+when
+  Spaceship( crew != null,
+             crew.crewSize > complement )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("crew size exceeds limits");
+end
+
+rule "A spaceship must have a location"
+when
+  Spaceship( location == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("spaceship missing recorded position");
+end

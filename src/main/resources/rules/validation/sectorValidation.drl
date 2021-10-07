@@ -1,0 +1,36 @@
+package rules.validation;
+
+import app.roddy.space.Planet;
+import app.roddy.space.Sector;
+import app.roddy.space.validation.ValidationResult;
+
+global ValidationResult validation;
+
+rule "A sector must have a designation"
+when
+  Sector( designation == null )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("sector must have a designation");
+end
+
+rule "A sector must contain planets"
+when
+  Sector( planets == null || planets.empty == true )
+then
+  validation.setIsValid(false);
+  validation.appendMessage("sector must have planets");
+end
+
+rule "A sector's planets must have distinct coordinates"
+when
+  Sector( $planets : planets != null,
+          planets.size > 1 )
+  Planet( $name: name != null,
+          $location: location != null) from $planets
+  Planet( name != $name,
+          location == $location ) from $planets
+then
+  validation.setIsValid(false);
+  validation.appendMessage("sector planets must be distinct locations");
+end

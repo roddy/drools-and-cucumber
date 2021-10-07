@@ -1,0 +1,136 @@
+package rules.travel;
+
+import app.roddy.space.data.Classification;
+import app.roddy.space.data.ShipType;
+import app.roddy.space.data.person.LatentSkillLevel;
+import app.roddy.space.data.person.LearnedSkillLevel;
+import app.roddy.space.data.transit.Transit;
+import app.roddy.space.crew.Crew;
+import app.roddy.space.crew.Occupation;
+import app.roddy.space.Person;
+import app.roddy.space.Planet;
+import app.roddy.space.Spaceship;
+
+rule "Set planet as destination if it is missing"
+when
+  Planet( $destination : location != null )
+  $transit : Transit( destination == null )
+then
+  $transit.setDestination($destination);
+end
+
+rule "Set current ship position as origin if it is missing"
+when
+  Spaceship( $origin : location != null )
+  $transit : Transit( origin == null )
+then
+  $transit.setOrigin($origin);
+end
+
+rule "Missing base range"
+when
+  $transit : Transit( )
+  Spaceship( shipType != null, classification != null)
+then
+end
+
+rule "Set base range for non-Military Freighter" // extends "Missing base range"
+when
+  $transit : Transit( )
+  Spaceship( shipType == ShipType.FREIGHTER,
+             classification in (Classification.CIVILIAN, Classification.PIRATE))
+then
+  $transit.setShipBaseRange(10);
+end
+
+rule "Set base range for Civilian Corvette" extends "Missing base range"
+when
+  Spaceship( shipType == ShipType.CORVETTE,
+             classification == Classification.CIVILIAN)
+then
+  $transit.setShipBaseRange(5);
+end
+
+rule "Set base range for Pirate Corvette" extends "Missing base range"
+when
+  Spaceship( shipType == ShipType.CORVETTE,
+             classification == Classification.PIRATE)
+then
+  $transit.setShipBaseRange(6);
+end
+
+rule "Set base range for Military Corvette" extends "Missing base range"
+when
+  Spaceship( shipType == ShipType.CORVETTE,
+             classification == Classification.MILITARY)
+then
+  $transit.setShipBaseRange(7);
+end
+
+rule "Set base range for Civilian Transport" extends "Missing base range"
+when
+  Spaceship( shipType == ShipType.TRANSPORT,
+             classification == Classification.CIVILIAN)
+then
+  $transit.setShipBaseRange(15);
+end
+
+rule "Set base range for Military Transport" extends "Missing base range"
+when
+  Spaceship( shipType == ShipType.TRANSPORT,
+             classification == Classification.MILITARY)
+then
+  $transit.setShipBaseRange(17);
+end
+
+rule "Set base range for Pirate Dreadnaught" extends "Missing base range"
+when
+  Spaceship( shipType == ShipType.DREADNAUGHT,
+             classification == Classification.PIRATE)
+then
+  $transit.setShipBaseRange(25);
+end
+
+rule "Set base range for Military Dreadnaught" extends "Missing base range"
+when
+  Spaceship( shipType == ShipType.DREADNAUGHT,
+             classification == Classification.MILITARY)
+then
+  $transit.setShipBaseRange(20);
+end
+
+rule "Has Pilot - BASE"
+when
+  Spaceship( $crew : crew != null )
+  Crew( $pilot : getCrewMemberByOccupation(Occupation.PILOT) != null ) from $crew
+  $transit : Transit()
+then
+end
+
+rule "Set pilot skill modifier - both latent and learned" extends "Has Pilot - BASE"
+when
+  Person( $latentSkillLevel : latentSkills[Occupation.PILOT] != null,
+          $learnedSkillLevel : learnedSkills[Occupation.PILOT] != null ) from $pilot
+  LatentSkillLevel( $latentModifier : modifier ) from $latentSkillLevel
+  LearnedSkillLevel( $learnedModifier : modifier ) from $learnedSkillLevel
+then
+  $transit.setPilotSkillModifier($latentModifier + $learnedModifier);
+end
+
+rule "Set pilot skill modifier - latent" extends "Has Pilot - BASE"
+when
+  Person( $latentSkillLevel : latentSkills[Occupation.PILOT] != null,
+          learnedSkills[Occupation.PILOT] == null) from $pilot
+  LatentSkillLevel( $modifier : modifier ) from $latentSkillLevel
+then
+  $transit.setPilotSkillModifier($modifier);
+end
+
+rule "Set pilot skill modifier - learned" extends "Has Pilot - BASE"
+when
+  Person( latentSkills[Occupation.PILOT] == null,
+          $learnedSkillLevel : learnedSkills[Occupation.PILOT] != null ) from $pilot
+  LearnedSkillLevel( $modifier : modifier ) from $learnedSkillLevel
+then
+  $transit.setPilotSkillModifier($modifier);
+end
